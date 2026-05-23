@@ -404,11 +404,16 @@ button:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
 
 /* PRINT */
 @media print{
-  body{background:#fff!important;color:#1a2e3d!important;font-size:11pt!important}
-  .topnav,.btabs,.fab-wrap,.chsheet,.chov,.drawer,.ovbg,.mov,.pdfov,.updbanner,.toast,.save-bar,.prog-bar,.login-screen{display:none!important}
-  .sec{display:block!important}
-  .main{padding:0!important}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  body{background:#e8e8e8!important}
+  .topnav,.btabs,.fab-wrap,.chsheet,.chov,.drawer,.ovbg,.mov,.updbanner,.toast,.save-bar,.prog-bar,.login-screen,.main,.sec,.pdf-nav{display:none!important}
+  .pdfov{position:static!important;opacity:1!important;pointer-events:all!important;background:#e8e8e8!important;display:flex!important;flex-direction:column!important;z-index:1!important;padding:0!important}
+  .pdf-body{padding:10px!important;background:#e8e8e8!important;flex:1!important}
+  .pdf-page{box-shadow:none!important;border-radius:0!important;max-width:100%!important;margin:0!important}
+  .pp-hdr,.pp-sec-hdr,.pp-footer{-webkit-print-color-adjust:exact!important}
+  .pp-stripe,.pp-ot-box,.pp-pago-badge{-webkit-print-color-adjust:exact!important}
+  .pp-tbl thead tr,.pp-tbl .pp-sub td,.pp-tbl .pp-tot td{-webkit-print-color-adjust:exact!important}
+  .pp-tbl tbody tr:nth-child(even){-webkit-print-color-adjust:exact!important}
 }
 </style>
 </head>
@@ -565,7 +570,7 @@ button:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
     <button class="btn-ico" style="color:var(--text)" onclick="closePdf()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     <button style="background:var(--cyan);border-color:var(--cyan);color:var(--navy);font-weight:700;font-size:13px;padding:7px 14px;min-height:36px;border-radius:var(--radius-sm)" onclick="doPrint()">
       <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-      Imprimir / PDF
+      Imprimir / Guardar PDF
     </button>
   </div>
   <div class="pdf-body" id="pdf-body-content"></div>
@@ -1666,11 +1671,35 @@ function openPdfPreview(){
 window.openPdfPreview=openPdfPreview;
 function closePdf(){document.getElementById('pdfov').classList.remove('open');}
 window.closePdf=closePdf;
-function doPrint(){closePdf();const content=buildPdfHtml();const w=window.open('','_blank');w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>OT ${gv('o-num')}</title><style>*{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}body{font-family:sans-serif;background:#fff}${document.querySelector('style').innerHTML}</style></head><body>${content}</body></html>`);w.document.close();setTimeout(()=>w.print(),400);}
+function doPrint(){
+  // Asegura que el contenido está generado
+  if(!document.getElementById('pdf-body-content').innerHTML){
+    document.getElementById('pdf-body-content').innerHTML=buildPdfHtml();
+  }
+  // Oculta todo excepto el contenido del PDF y dispara impresión
+  const ov=document.getElementById('pdfov');
+  const wasOpen=ov.classList.contains('open');
+  // Muestra el overlay si no estaba abierto (necesario para que window.print lo capture)
+  ov.style.position='static';
+  ov.style.opacity='1';
+  ov.style.pointerEvents='all';
+  ov.style.background='#e8e8e8';
+  ov.style.zIndex='9999';
+  setTimeout(()=>{
+    window.print();
+    setTimeout(()=>{
+      ov.style.position='';ov.style.opacity='';ov.style.pointerEvents='';
+      ov.style.background='';ov.style.zIndex='';
+      if(!wasOpen)closePdf();
+    },1000);
+  },200);
+}
 window.doPrint=doPrint;
 
 function generarFacturaPDF(){
-  syncFac();doPrint();
+  syncFac();
+  document.getElementById('pdf-body-content').innerHTML=buildPdfHtml();
+  doPrint();
 }
 window.generarFacturaPDF=generarFacturaPDF;
 
