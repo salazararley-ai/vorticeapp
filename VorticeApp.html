@@ -568,9 +568,9 @@ button:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
     <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:var(--red);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
     <span class="pdf-nav-t">Vista previa — OT</span>
     <button class="btn-ico" style="color:var(--text)" onclick="closePdf()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    <button style="background:var(--cyan);border-color:var(--cyan);color:var(--navy);font-weight:700;font-size:13px;padding:7px 14px;min-height:36px;border-radius:var(--radius-sm)" onclick="doPrint()">
+    <button style="background:var(--cyan);border-color:var(--cyan);color:var(--navy);font-weight:700;font-size:13px;padding:7px 14px;min-height:36px;border-radius:var(--radius-sm)" onclick="generarYCompartirPDF()">
       <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-      Imprimir / Guardar PDF
+      Compartir PDF
     </button>
   </div>
   <div class="pdf-body" id="pdf-body-content"></div>
@@ -1059,19 +1059,27 @@ button:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
 <div class="save-bar" id="save-bar" style="display:none">
   <button class="btn-pdf-main" onclick="openPdfPreview()">
     <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-    Vista previa
+    Ver
+  </button>
+  <button id="btn-compartir-pdf" style="background:var(--navy2);border-color:var(--border2);color:var(--text);min-height:46px;padding:0 14px;display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:var(--radius-sm);font-size:13px;cursor:pointer;transition:all .15s;white-space:nowrap" onclick="generarYCompartirPDF()">
+    <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    Compartir
   </button>
   <button class="btn-save-main" onclick="saveOT()">
     <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-    Guardar OT
+    Guardar
   </button>
 </div>
 
 <!-- FACTURA SAVE BAR -->
 <div class="save-bar" id="fac-save-bar" style="display:none">
-  <button class="btn-save-main" style="flex:1" onclick="generarFacturaPDF()">
-    <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
-    Generar PDF Factura
+  <button class="btn-pdf-main" onclick="openPdfPreview()" style="padding:0 14px">
+    <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+    Ver
+  </button>
+  <button id="btn-compartir-fac" class="btn-save-main" style="flex:1" onclick="syncFac();generarYCompartirPDF()">
+    <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    Compartir Factura
   </button>
 </div>
 
@@ -1080,6 +1088,143 @@ button:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
   <svg id="toast-ico" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
   <span id="toast-msg"></span>
 </div>
+<!-- PDF Generation Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+/* ─── PDF SHARE ENGINE ─── */
+async function generarYCompartirPDF() {
+  const btn = document.getElementById('btn-compartir-pdf');
+  const btnFac = document.getElementById('btn-compartir-fac');
+  const activoBtn = btn || btnFac;
+
+  // Mostrar estado de carga
+  if(activoBtn){ activoBtn.disabled=true; activoBtn.textContent='Generando PDF…'; }
+  
+  try {
+    // Asegura que la vista previa está generada
+    const pdfBody = document.getElementById('pdf-body-content');
+    if(!pdfBody.innerHTML){ pdfBody.innerHTML = buildPdfHtml(); }
+    
+    // Asegura que el overlay está visible para html2canvas
+    const overlay = document.getElementById('pdfov');
+    const wasOpen = overlay.classList.contains('open');
+    overlay.classList.add('open');
+    
+    // Pequeña pausa para que el DOM renderice
+    await new Promise(r => setTimeout(r, 300));
+    
+    // Capturar el contenido del PDF con html2canvas
+    const pdfPage = pdfBody.querySelector('.pdf-page');
+    if(!pdfPage) throw new Error('No hay contenido PDF');
+    
+    const canvas = await html2canvas(pdfPage, {
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#ffffff',
+      logging: false,
+      width: pdfPage.scrollWidth,
+      height: pdfPage.scrollHeight
+    });
+    
+    // Generar PDF con jsPDF
+    const { jsPDF } = window.jspdf;
+    const imgData = canvas.toDataURL('image/jpeg', 0.92);
+    const pdfWidth = 210; // A4 mm
+    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+    
+    const pdf = new jsPDF({
+      orientation: pdfHeight > pdfWidth ? 'portrait' : 'landscape',
+      unit: 'mm',
+      format: 'a4'
+    });
+    
+    // Si el contenido es más largo que una página, dividir en páginas
+    const pageHeight = 297; // A4 alto en mm
+    let yPos = 0;
+    let remaining = pdfHeight;
+    
+    while(remaining > 0) {
+      const sliceHeight = Math.min(pageHeight, remaining);
+      const sliceCanvas = document.createElement('canvas');
+      sliceCanvas.width = canvas.width;
+      sliceCanvas.height = (sliceHeight / pdfHeight) * canvas.height;
+      const sliceCtx = sliceCanvas.getContext('2d');
+      sliceCtx.drawImage(
+        canvas,
+        0, (yPos / pdfHeight) * canvas.height,
+        canvas.width, sliceCanvas.height,
+        0, 0,
+        canvas.width, sliceCanvas.height
+      );
+      const sliceData = sliceCanvas.toDataURL('image/jpeg', 0.92);
+      if(yPos > 0) pdf.addPage();
+      pdf.addImage(sliceData, 'JPEG', 0, 0, pdfWidth, sliceHeight);
+      yPos += sliceHeight;
+      remaining -= sliceHeight;
+    }
+    
+    // Nombre del archivo
+    const otNum = document.getElementById('o-num')?.value || 'OT';
+    const cliente = document.getElementById('o-cli')?.value || 'Cliente';
+    const fecha = new Date().toLocaleDateString('es-CO').replace(/\//g,'-');
+    const fileName = `${otNum}_${cliente.replace(/[^a-zA-Z0-9]/g,'_')}_${fecha}.pdf`;
+    
+    // Convertir a Blob para compartir
+    const pdfBlob = pdf.output('blob');
+    const pdfFile = new File([pdfBlob], fileName, { type: 'application/pdf' });
+    
+    // Cerrar overlay si no estaba abierto
+    if(!wasOpen) overlay.classList.remove('open');
+    
+    // Intentar Web Share API (nativo del celular)
+    if(navigator.share && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+      await navigator.share({
+        title: `${otNum} — ${cliente}`,
+        text: `Orden de trabajo ${otNum} — Vórtice E&C SAS`,
+        files: [pdfFile]
+      });
+      toast('PDF compartido ✓', 'success');
+    } else if(navigator.share) {
+      // Share sin archivo (solo link de descarga)
+      const url = URL.createObjectURL(pdfBlob);
+      await navigator.share({ title: `${otNum}`, url });
+      toast('Compartido ✓', 'success');
+    } else {
+      // Fallback: descarga directa
+      const url = URL.createObjectURL(pdfBlob);
+      const a = document.createElement('a');
+      a.href = url; a.download = fileName;
+      document.body.appendChild(a); a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast('PDF descargado ✓', 'success');
+    }
+    
+  } catch(err) {
+    console.error('PDF error:', err);
+    // Fallback: intentar compartir como texto/imagen
+    if(navigator.share) {
+      try {
+        await navigator.share({
+          title: 'OT Vórtice E&C SAS',
+          text: `Orden ${document.getElementById('o-num')?.value||''} — Cliente: ${document.getElementById('o-cli')?.value||''} — Total: ${document.getElementById('mat-total-val')?.textContent||''}`
+        });
+        toast('Compartido como texto ✓', 'info');
+      } catch(e2) {
+        toast('No se pudo compartir', 'error');
+      }
+    } else {
+      toast('Error al generar PDF', 'error');
+    }
+  }
+  
+  if(activoBtn){ activoBtn.disabled=false; activoBtn.innerHTML='<svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Compartir PDF'; }
+}
+window.generarYCompartirPDF = generarYCompartirPDF;
+</script>
+
 <!-- Firebase SDKs -->
 <script type="module">
 import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
